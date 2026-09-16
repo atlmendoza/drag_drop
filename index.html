@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UML Class Relationships Drag & Drop</title>
+  <title>UML Relationships Table Drag & Drop</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -20,39 +20,33 @@
       margin: 15px 0;
       font-size: 18px;
     }
-    .container {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 20px;
     }
-    .box {
-      width: 45%;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .definition {
-      border: 2px dashed #ccc;
-      border-radius: 6px;
+    th, td {
+      border: 2px solid #ccc;
       padding: 10px;
-      margin: 10px 0;
+      text-align: center;
       min-height: 50px;
+    }
+    th {
+      background-color: #0078d7;
+      color: white;
     }
     .draggable {
       background-color: #0078d7;
       color: white;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 6px;
       margin: 5px;
       cursor: grab;
       display: inline-block;
     }
-    .definition.over {
-      border-color: #0078d7;
+    td.over {
       background-color: #e8f0fe;
+      border-color: #0078d7;
     }
     #resetBtn {
       display: block;
@@ -67,94 +61,51 @@
   </style>
 </head>
 <body>
-  <h1>Drag & Drop: UML Class Relationships</h1>
+  <h1>Drag & Drop: Complete the UML Relationships Table</h1>
 
   <div class="status">
-    ⏱ Time Left: <span id="timer">60</span>s | ✅ Score: <span id="score">0</span>/4
+    ⏱ Time Left: <span id="timer">90</span>s | ✅ Score: <span id="score">0</span>/16
   </div>
 
-  <div class="container">
-    <div class="box">
-      <h3>🧩 Relationship Types</h3>
-      <div id="items">
-        <div class="draggable" draggable="true" id="composition">Composition</div>
-        <div class="draggable" draggable="true" id="aggregation">Aggregation</div>
-        <div class="draggable" draggable="true" id="inheritance">Inheritance</div>
-        <div class="draggable" draggable="true" id="dependency">Dependency</div>
-      </div>
-    </div>
+  <!-- Table with empty cells -->
+  <table>
+    <tr>
+      <th>Relationship</th>
+      <th>Definition</th>
+      <th>UML Notation</th>
+      <th>Lifecycle</th>
+      <th>Example</th>
+    </tr>
+    <tr>
+      <td>Composition</td>
+      <td class="drop" data-match="composition-def"></td>
+      <td class="drop" data-match="composition-uml"></td>
+      <td class="drop" data-match="composition-life"></td>
+      <td class="drop" data-match="composition-ex"></td>
+    </tr>
+    <tr>
+      <td>Aggregation</td>
+      <td class="drop" data-match="aggregation-def"></td>
+      <td class="drop" data-match="aggregation-uml"></td>
+      <td class="drop" data-match="aggregation-life"></td>
+      <td class="drop" data-match="aggregation-ex"></td>
+    </tr>
+    <tr>
+      <td>Inheritance</td>
+      <td class="drop" data-match="inheritance-def"></td>
+      <td class="drop" data-match="inheritance-uml"></td>
+      <td class="drop" data-match="inheritance-life"></td>
+      <td class="drop" data-match="inheritance-ex"></td>
+    </tr>
+    <tr>
+      <td>Dependency</td>
+      <td class="drop" data-match="dependency-def"></td>
+      <td class="drop" data-match="dependency-uml"></td>
+      <td class="drop" data-match="dependency-life"></td>
+      <td class="drop" data-match="dependency-ex"></td>
+    </tr>
+  </table>
 
-    <div class="box">
-      <h3>📘 Definitions</h3>
-      <div class="definition" data-match="composition">Strong “whole–part” relationship; parts die with the whole.</div>
-      <div class="definition" data-match="aggregation">Weak “whole–part” relationship; parts can exist independently.</div>
-      <div class="definition" data-match="inheritance">“Is‑a” relationship; subclass inherits attributes and methods.</div>
-      <div class="definition" data-match="dependency">Temporary “uses‑a” relationship; one class depends on another.</div>
-    </div>
-  </div>
-
-  <button id="resetBtn">Reset</button>
-
-  <script>
-    const draggables = document.querySelectorAll('.draggable');
-    const definitions = document.querySelectorAll('.definition');
-    let draggedItem = null;
-    let score = 0;
-    let timeLeft = 60;
-    let timerInterval;
-
-    // Drag events
-    draggables.forEach(item => {
-      item.addEventListener('dragstart', () => {
-        draggedItem = item;
-        setTimeout(() => item.style.display = 'none', 0);
-      });
-      item.addEventListener('dragend', () => {
-        setTimeout(() => {
-          if (draggedItem) draggedItem.style.display = 'inline-block';
-          draggedItem = null;
-        }, 0);
-      });
-    });
-
-    definitions.forEach(def => {
-      def.addEventListener('dragover', e => {
-        e.preventDefault();
-        def.classList.add('over');
-      });
-      def.addEventListener('dragleave', () => def.classList.remove('over'));
-      def.addEventListener('drop', () => {
-        def.classList.remove('over');
-        if (draggedItem && def.dataset.match === draggedItem.id) {
-          def.textContent += ` ✅ (${draggedItem.textContent})`;
-          draggedItem.remove();
-          score++;
-          document.getElementById('score').textContent = score;
-          if (score === 4) {
-            clearInterval(timerInterval);
-            alert("🎉 Well done! You matched all correctly!");
-          }
-        } else {
-          alert('Incorrect match! Try again.');
-        }
-      });
-    });
-
-    // Timer
-    function startTimer() {
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          alert("⏰ Time’s up! Your score: " + score + "/4");
-        }
-      }, 1000);
-    }
-    startTimer();
-
-    // Reset
-    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
-  </script>
-</body>
-</html>
+  <!-- Draggable items -->
+  <div id="items">
+    <h3>🧩 Drag these into the table
