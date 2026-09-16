@@ -108,4 +108,90 @@
 
   <!-- Draggable items -->
   <div id="items">
-    <h3>🧩 Drag these into the table
+    <h3>🧩 Drag these into the table:</h3>
+    <div class="draggable" draggable="true" id="composition-def">Strong “whole–part”; parts die with the whole</div>
+    <div class="draggable" draggable="true" id="composition-uml">◼ Filled diamond</div>
+    <div class="draggable" draggable="true" id="composition-life">Parts live and die with the whole</div>
+    <div class="draggable" draggable="true" id="composition-ex">Car ◼ Engine</div>
+
+    <div class="draggable" draggable="true" id="aggregation-def">Weak “whole–part”; parts can exist independently</div>
+    <div class="draggable" draggable="true" id="aggregation-uml">◇ Hollow diamond</div>
+    <div class="draggable" draggable="true" id="aggregation-life">Parts can outlive the whole</div>
+    <div class="draggable" draggable="true" id="aggregation-ex">Team ◇ Player</div>
+
+    <div class="draggable" draggable="true" id="inheritance-def">“Is‑a” relationship; subclass inherits</div>
+    <div class="draggable" draggable="true" id="inheritance-uml">▷ Hollow triangle</div>
+    <div class="draggable" draggable="true" id="inheritance-life">Subclass depends on superclass</div>
+    <div class="draggable" draggable="true" id="inheritance-ex">Dog ▷ Animal</div>
+
+    <div class="draggable" draggable="true" id="dependency-def">Temporary “uses‑a” relationship</div>
+    <div class="draggable" draggable="true" id="dependency-uml">→ Dashed arrow</div>
+    <div class="draggable" draggable="true" id="dependency-life">No ownership; short‑term usage</div>
+    <div class="draggable" draggable="true" id="dependency-ex">Printer → Document</div>
+  </div>
+
+  <button id="resetBtn">Reset</button>
+
+  <script>
+    const draggables = document.querySelectorAll('.draggable');
+    const drops = document.querySelectorAll('.drop');
+    let draggedItem = null;
+    let score = 0;
+    let timeLeft = 90;
+    let timerInterval;
+
+    // Drag events
+    draggables.forEach(item => {
+      item.addEventListener('dragstart', () => {
+        draggedItem = item;
+        setTimeout(() => item.style.display = 'none', 0);
+      });
+      item.addEventListener('dragend', () => {
+        setTimeout(() => {
+          if (draggedItem) draggedItem.style.display = 'inline-block';
+          draggedItem = null;
+        }, 0);
+      });
+    });
+
+    drops.forEach(cell => {
+      cell.addEventListener('dragover', e => {
+        e.preventDefault();
+        cell.classList.add('over');
+      });
+      cell.addEventListener('dragleave', () => cell.classList.remove('over'));
+      cell.addEventListener('drop', () => {
+        cell.classList.remove('over');
+        if (draggedItem && cell.dataset.match === draggedItem.id) {
+          cell.textContent = draggedItem.textContent + " ✅";
+          draggedItem.remove();
+          score++;
+          document.getElementById('score').textContent = score;
+          if (score === 16) {
+            clearInterval(timerInterval);
+            alert("🎉 Excellent! You completed the table!");
+          }
+        } else {
+          alert('Incorrect cell! Try again.');
+        }
+      });
+    });
+
+    // Timer
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("⏰ Time’s up! Your score: " + score + "/16");
+        }
+      }, 1000);
+    }
+    startTimer();
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+  </script>
+</body>
+</html>
