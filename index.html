@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UML Class Relationships Drag & Drop</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .box {
+      width: 45%;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .definition {
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 50px;
+    }
+    .draggable {
+      background-color: #0078d7;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 5px;
+      cursor: grab;
+      display: inline-block;
+    }
+    .definition.over {
+      border-color: #0078d7;
+      background-color: #e8f0fe;
+    }
+    #resetBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drag & Drop: UML Class Relationships</h1>
+
+  <div class="container">
+    <div class="box">
+      <h3>🧩 Relationship Types</h3>
+      <div id="items">
+        <div class="draggable" draggable="true" id="composition">Composition</div>
+        <div class="draggable" draggable="true" id="aggregation">Aggregation</div>
+        <div class="draggable" draggable="true" id="inheritance">Inheritance</div>
+        <div class="draggable" draggable="true" id="dependency">Dependency</div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>📘 Definitions</h3>
+      <div class="definition" data-match="composition">Strong “whole–part” relationship; parts die with the whole.</div>
+      <div class="definition" data-match="aggregation">Weak “whole–part” relationship; parts can exist independently.</div>
+      <div class="definition" data-match="inheritance">“Is‑a” relationship; subclass inherits attributes and methods.</div>
+      <div class="definition" data-match="dependency">Temporary “uses‑a” relationship; one class depends on another.</div>
+    </div>
+  </div>
+
+  <button id="resetBtn">Reset</button>
+
+  <script>
+    const draggables = document.querySelectorAll('.draggable');
+    const definitions = document.querySelectorAll('.definition');
+    let draggedItem = null;
+
+    draggables.forEach(item => {
+      item.addEventListener('dragstart', () => {
+        draggedItem = item;
+        setTimeout(() => item.style.display = 'none', 0);
+      });
+      item.addEventListener('dragend', () => {
+        setTimeout(() => {
+          draggedItem.style.display = 'inline-block';
+          draggedItem = null;
+        }, 0);
+      });
+    });
+
+    definitions.forEach(def => {
+      def.addEventListener('dragover', e => {
+        e.preventDefault();
+        def.classList.add('over');
+      });
+      def.addEventListener('dragleave', () => def.classList.remove('over'));
+      def.addEventListener('drop', () => {
+        def.classList.remove('over');
+        if (draggedItem && def.dataset.match === draggedItem.id) {
+          def.textContent += ` ✅ (${draggedItem.textContent})`;
+          draggedItem.remove();
+        } else {
+          alert('Incorrect match! Try again.');
+        }
+      });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+  </script>
+</body>
+</html>
