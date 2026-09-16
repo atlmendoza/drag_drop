@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identify UML Relationships in Python</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .status {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 18px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .snippet {
+      width: 45%;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin: 10px;
+      padding: 15px;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .drop {
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 10px;
+      min-height: 40px;
+      text-align: center;
+    }
+    .drop.over {
+      background-color: #e8f0fe;
+      border-color: #0078d7;
+    }
+    .tiles {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .draggable {
+      background-color: #0078d7;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 5px;
+      cursor: grab;
+      display: inline-block;
+    }
+    #resetBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drag & Drop: Identify UML Relationships in Python</h1>
+
+  <div class="status">
+    ⏱ Time Left: <span id="timer">90</span>s | ✅ Score: <span id="score">0</span>/4
+  </div>
+
+  <div class="container">
+    <!-- Composition -->
+    <div class="snippet">
+      <h3>Snippet 1</h3>
+      <pre>
+class Engine:
+    pass
+
+class Car:
+    def __init__(self):
+        self.engine = Engine()
+      </pre>
+      <div class="drop" data-match="composition">Drop relationship here</div>
+    </div>
+
+    <!-- Aggregation -->
+    <div class="snippet">
+      <h3>Snippet 2</h3>
+      <pre>
+class Player:
+    pass
+
+class Team:
+    def __init__(self, players):
+        self.players = players
+      </pre>
+      <div class="drop" data-match="aggregation">Drop relationship here</div>
+    </div>
+
+    <!-- Inheritance -->
+    <div class="snippet">
+      <h3>Snippet 3</h3>
+      <pre>
+class Animal:
+    def speak(self):
+        print("Generic sound")
+
+class Dog(Animal):
+    def speak(self):
+        print("Woof!")
+      </pre>
+      <div class="drop" data-match="inheritance">Drop relationship here</div>
+    </div>
+
+    <!-- Dependency -->
+    <div class="snippet">
+      <h3>Snippet 4</h3>
+      <pre>
+class Document:
+    pass
+
+class Printer:
+    def print_doc(self, doc: Document):
+        print("Printing document")
+      </pre>
+      <div class="drop" data-match="dependency">Drop relationship here</div>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <h3>🧩 Drag these tiles:</h3>
+    <div class="draggable" draggable="true" id="composition">Composition</div>
+    <div class="draggable" draggable="true" id="aggregation">Aggregation</div>
+    <div class="draggable" draggable="true" id="inheritance">Inheritance</div>
+    <div class="draggable" draggable="true" id="dependency">Dependency</div>
+  </div>
+
+  <button id="resetBtn">Reset</button>
+
+  <script>
+    const draggables = document.querySelectorAll('.draggable');
+    const drops = document.querySelectorAll('.drop');
+    let draggedItem = null;
+    let score = 0;
+    let timeLeft = 90;
+    let timerInterval;
+
+    // Drag events
+    draggables.forEach(item => {
+      item.addEventListener('dragstart', () => {
+        draggedItem = item;
+        setTimeout(() => item.style.display = 'none', 0);
+      });
+      item.addEventListener('dragend', () => {
+        setTimeout(() => {
+          if (draggedItem) draggedItem.style.display = 'inline-block';
+          draggedItem = null;
+        }, 0);
+      });
+    });
+
+    drops.forEach(cell => {
+      cell.addEventListener('dragover', e => {
+        e.preventDefault();
+        cell.classList.add('over');
+      });
+      cell.addEventListener('dragleave', () => cell.classList.remove('over'));
+      cell.addEventListener('drop', () => {
+        cell.classList.remove('over');
+        if (draggedItem && cell.dataset.match === draggedItem.id) {
+          cell.textContent = draggedItem.textContent + " ✅";
+          draggedItem.remove();
+          score++;
+          document.getElementById('score').textContent = score;
+          if (score === 4) {
+            clearInterval(timerInterval);
+            alert("🎉 Well done! You matched all correctly!");
+          }
+        } else {
+          alert('Incorrect match! Try again.');
+        }
+      });
+    });
+
+    // Timer
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("⏰ Time’s up! Your score: " + score + "/4");
+        }
+      }, 1000);
+    }
+    startTimer();
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+  </script>
+</body>
+</html>
