@@ -65,7 +65,7 @@
       cursor: grab;
       display: inline-block;
     }
-    #resetBtn {
+    #resetBtn, #nextBtn {
       display: block;
       margin: 20px auto;
       padding: 10px 20px;
@@ -151,7 +151,10 @@ class Printer:
     <div class="draggable" draggable="true" id="dependency">Dependency</div>
   </div>
 
-  <button id="resetBtn">Reset</button>
+  <div>
+    <button id="resetBtn">Reset</button>
+    <button id="nextBtn"> Next </button>
+  </div>
 
   <script>
     const draggables = document.querySelectorAll('.draggable');
@@ -213,6 +216,7 @@ class Printer:
 
     // Reset
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+    document.getElementById('resetBtn').addEventListener('click', () => window.open("index.html"));
   </script>
 </body>
 </html>
