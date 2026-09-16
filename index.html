@@ -15,11 +15,16 @@
       text-align: center;
       color: #333;
     }
+    .status {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 18px;
+    }
     .container {
       display: flex;
       justify-content: space-around;
       flex-wrap: wrap;
-      margin-top: 30px;
+      margin-top: 20px;
     }
     .box {
       width: 45%;
@@ -64,6 +69,10 @@
 <body>
   <h1>Drag & Drop: UML Class Relationships</h1>
 
+  <div class="status">
+    ⏱ Time Left: <span id="timer">60</span>s | ✅ Score: <span id="score">0</span>/4
+  </div>
+
   <div class="container">
     <div class="box">
       <h3>🧩 Relationship Types</h3>
@@ -90,7 +99,11 @@
     const draggables = document.querySelectorAll('.draggable');
     const definitions = document.querySelectorAll('.definition');
     let draggedItem = null;
+    let score = 0;
+    let timeLeft = 60;
+    let timerInterval;
 
+    // Drag events
     draggables.forEach(item => {
       item.addEventListener('dragstart', () => {
         draggedItem = item;
@@ -98,7 +111,7 @@
       });
       item.addEventListener('dragend', () => {
         setTimeout(() => {
-          draggedItem.style.display = 'inline-block';
+          if (draggedItem) draggedItem.style.display = 'inline-block';
           draggedItem = null;
         }, 0);
       });
@@ -115,12 +128,32 @@
         if (draggedItem && def.dataset.match === draggedItem.id) {
           def.textContent += ` ✅ (${draggedItem.textContent})`;
           draggedItem.remove();
+          score++;
+          document.getElementById('score').textContent = score;
+          if (score === 4) {
+            clearInterval(timerInterval);
+            alert("🎉 Well done! You matched all correctly!");
+          }
         } else {
           alert('Incorrect match! Try again.');
         }
       });
     });
 
+    // Timer
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("⏰ Time’s up! Your score: " + score + "/4");
+        }
+      }, 1000);
+    }
+    startTimer();
+
+    // Reset
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
   </script>
 </body>
