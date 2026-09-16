@@ -65,8 +65,8 @@
       cursor: grab;
       display: inline-block;
     }
-    #resetBtn, #prevBtn {
-      display: block;
+    #resetBtn {
+      display: inline-block;
       margin: 20px auto;
       padding: 10px 20px;
       background-color: #800000;
@@ -84,64 +84,7 @@
     ⏱ Time Left: <span id="timer">90</span>s | ✅ Score: <span id="score">0</span>/4
   </div>
 
-  <div class="container">
-    <!-- Composition -->
-    <div class="snippet">
-      <h3>Snippet 1</h3>
-      <pre>
-class Engine:
-    pass
-
-class Car:
-    def __init__(self):
-        self.engine = Engine()
-      </pre>
-      <div class="drop" data-match="composition">Drop relationship here</div>
-    </div>
-
-    <!-- Aggregation -->
-    <div class="snippet">
-      <h3>Snippet 2</h3>
-      <pre>
-class Player:
-    pass
-
-class Team:
-    def __init__(self, players):
-        self.players = players
-      </pre>
-      <div class="drop" data-match="aggregation">Drop relationship here</div>
-    </div>
-
-    <!-- Inheritance -->
-    <div class="snippet">
-      <h3>Snippet 3</h3>
-      <pre>
-class Animal:
-    def speak(self):
-        print("Generic sound")
-
-class Dog(Animal):
-    def speak(self):
-        print("Woof!")
-      </pre>
-      <div class="drop" data-match="inheritance">Drop relationship here</div>
-    </div>
-
-    <!-- Dependency -->
-    <div class="snippet">
-      <h3>Snippet 4</h3>
-      <pre>
-class Document:
-    pass
-
-class Printer:
-    def print_doc(self, doc: Document):
-        print("Printing document")
-      </pre>
-      <div class="drop" data-match="dependency">Drop relationship here</div>
-    </div>
-  </div>
+  <div class="container" id="snippetContainer"></div>
 
   <div class="tiles">
     <h3>🧩 Drag these tiles:</h3>
@@ -150,13 +93,47 @@ class Printer:
     <div class="draggable" draggable="true" id="inheritance">Inheritance</div>
     <div class="draggable" draggable="true" id="dependency">Dependency</div>
   </div>
-
   <div>
     <button id="resetBtn">Reset</button>
-    <button id="prevBtn"> Previous </button>
+    <button id="prevBtn">Previous</button>
   </div>
-
   <script>
+    const sets = [
+      // --- Set 1: Easy ---
+      [
+        {id:"composition", code:`class Engine:\n    pass\n\nclass Car:\n    def __init__(self):\n        self.engine = Engine()`, label:"Snippet 1"},
+        {id:"aggregation", code:`class Player:\n    pass\n\nclass Team:\n    def __init__(self, players):\n        self.players = players`, label:"Snippet 2"},
+        {id:"inheritance", code:`class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed`, label:"Snippet 3"},
+        {id:"dependency", code:`class Document:\n    pass\n\nclass Printer:\n    def print_doc(self, doc: Document):\n        print("Printing document")`, label:"Snippet 4"}
+      ],
+      // --- Set 2: Medium ---
+      [
+        {id:"composition", code:`class CPU:\n    pass\n\nclass Computer:\n    def __init__(self):\n        self.cpu = CPU()`, label:"Snippet 1"},
+        {id:"aggregation", code:`class Book:\n    pass\n\nclass Library:\n    def __init__(self, books):\n        self.books = books`, label:"Snippet 2"},
+        {id:"inheritance", code:`class Vehicle:\n    def __init__(self, brand):\n        self.brand = brand\n\nclass ElectricCar(Vehicle):\n    def __init__(self, brand, battery):\n        super().__init__(brand)\n        self.battery = battery`, label:"Snippet 3"},
+        {id:"dependency", code:`class Order:\n    pass\n\nclass PaymentProcessor:\n    def process(self, order: Order):\n        print("Processing order")`, label:"Snippet 4"}
+      ],
+      // --- Set 3: Hard ---
+      [
+        {id:"composition", code:`class Heart:\n    pass\n\nclass Human:\n    def __init__(self):\n        self.heart = Heart()`, label:"Snippet 1"},
+        {id:"aggregation", code:`class Course:\n    pass\n\nclass Student:\n    def __init__(self, courses):\n        self.courses = courses`, label:"Snippet 2"},
+        {id:"inheritance", code:`class Account:\n    def __init__(self, balance):\n        self.balance = balance\n\nclass SavingsAccount(Account):\n    def __init__(self, balance, interest):\n        super().__init__(balance)\n        self.interest = interest`, label:"Snippet 3"},
+        {id:"dependency", code:`class File:\n    pass\n\nclass FileReader:\n    def read(self, file: File):\n        print("Reading file")`, label:"Snippet 4"}
+      ]
+    ];
+
+    // Pick random set
+    const chosenSet = sets[Math.floor(Math.random() * sets.length)];
+    const container = document.getElementById('snippetContainer');
+
+    chosenSet.forEach(snippet => {
+      const div = document.createElement('div');
+      div.className = 'snippet';
+      div.innerHTML = `<h3>${snippet.label}</h3><pre>${snippet.code}</pre><div class="drop" data-match="${snippet.id}">Drop relationship here</div>`;
+      container.appendChild(div);
+    });
+
+    // Drag logic
     const draggables = document.querySelectorAll('.draggable');
     const drops = document.querySelectorAll('.drop');
     let draggedItem = null;
@@ -164,7 +141,6 @@ class Printer:
     let timeLeft = 90;
     let timerInterval;
 
-    // Drag events
     draggables.forEach(item => {
       item.addEventListener('dragstart', () => {
         draggedItem = item;
@@ -193,7 +169,7 @@ class Printer:
           document.getElementById('score').textContent = score;
           if (score === 4) {
             clearInterval(timerInterval);
-            alert("🎉 Well done! You matched all correctly!");
+            alert("🎉 Excellent! You matched all correctly!");
           }
         } else {
           alert('Incorrect match! Try again.');
@@ -214,9 +190,9 @@ class Printer:
     }
     startTimer();
 
-    // Reset
+    // Reset and Previous
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
-    document.getElementById('prevBtn').addEventListener('click', () => window.open("index.html"));
+    document.getElementById('resetBtn').addEventListener('click', () => window.open("index.html));
   </script>
 </body>
 </html>
