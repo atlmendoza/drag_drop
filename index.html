@@ -127,7 +127,7 @@
     <div class="draggable" draggable="true" id="dependency-def">Temporary “uses‑a” relationship</div>
     <div class="draggable" draggable="true" id="dependency-uml">→ Dashed arrow</div>
     <div class="draggable" draggable="true" id="dependency-life">No ownership; short‑term usage</div>
-    <div class="draggable" draggable="true" id="dependency-ex">Printer -→ Document</div>
+    <div class="draggable" draggable="true" id="dependency-ex">Printer → Document</div>
   </div>
 
   <button id="resetBtn">Reset</button>
@@ -135,10 +135,19 @@
   <script>
     const draggables = document.querySelectorAll('.draggable');
     const drops = document.querySelectorAll('.drop');
+    const itemsContainer = document.getElementById('items');
     let draggedItem = null;
     let score = 0;
     let timeLeft = 90;
     let timerInterval;
+
+    // Shuffle function
+    function shuffle(container) {
+      for (let i = container.children.length; i >= 0; i--) {
+        container.appendChild(container.children[Math.random() * i | 0]);
+      }
+    }
+    shuffle(itemsContainer);
 
     // Drag events
     draggables.forEach(item => {
