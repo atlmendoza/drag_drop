@@ -79,84 +79,86 @@
       ]
     ];
 
-    // Pick random set
-    const chosenSet = sets[Math.floor(Math.random() * sets.length)];
+  // Pick random set
+  const chosenSet = sets[Math.floor(Math.random() * sets.length)];
 
-    // Shuffle snippets within the set
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
+  // Shuffle snippets within the set
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
-    shuffle(chosenSet);
+  }
+  shuffle(chosenSet);
 
-    // Render snippets into Snippet 1–4 boxes
-    const container = document.getElementById('snippetContainer');
-    chosenSet.forEach((snippet, index) => {
-      const div = document.createElement('div');
-      div.className = 'snippet';
-      div.innerHTML = `<h3>Snippet ${index+1}</h3><pre>${snippet.code}</pre><div class="drop" data-match="${snippet.id}">Drop relationship here</div>`;
-      container.appendChild(div);
+  // Render snippets into Snippet 1–4 boxes
+  const container = document.getElementById('snippetContainer');
+  chosenSet.forEach((snippet, index) => {
+    const div = document.createElement('div');
+    div.className = 'snippet';
+    div.innerHTML = `<h3>Snippet ${index+1}</h3><pre>${snippet.code}</pre><div class="drop" data-match="${snippet.id}">Drop relationship here</div>`;
+    container.appendChild(div);
+  });
+
+  // Drag logic
+  const draggables = document.querySelectorAll('.draggable');
+  const drops = document.querySelectorAll('.drop');
+  let draggedItem = null;
+  let score = 0;
+  let timeLeft = 90;
+  let timerInterval;
+
+  draggables.forEach(item => {
+    item.addEventListener('dragstart', () => {
+      draggedItem = item;
+      setTimeout(() => item.style.display = 'none', 0);
     });
-
-       // Drag logic
-    const draggables = document.querySelectorAll('.draggable');
-    const drops = document.querySelectorAll('.drop');
-    let draggedItem = null;
-    let score = 0;
-    let timeLeft = 90;
-    let timerInterval;
-
-    draggables.forEach(item => {
-      item.addEventListener('dragstart', () => {
-        draggedItem = item;
-        setTimeout(() => item.style.display = 'none', 0);
-      });
-      item.addEventListener('dragend', () => {
-        setTimeout(() => {
-          if (draggedItem) draggedItem.style.display = 'inline-block';
-          draggedItem = null;
-        }, 0);
-      });
+    item.addEventListener('dragend', () => {
+      setTimeout(() => {
+        if (draggedItem) draggedItem.style.display = 'inline-block';
+        draggedItem = null;
+      }, 0);
     });
+  });
 
-    drops.forEach(cell => {
-      cell.addEventListener('dragover', e => {
-        e.preventDefault();
-        cell.classList.add('over');
-      });
-      cell.addEventListener('dragleave', () => cell.classList.remove('over'));
-      cell.addEventListener('drop', () => {
-        cell.classList.remove('over');
-        if (draggedItem && cell.dataset.match === draggedItem.id) {
-          cell.textContent = draggedItem.textContent + " ✅";
-          draggedItem.remove();
-          score++;
-          document.getElementById('score').textContent = score;
-          if (score === 4) {
-            clearInterval(timerInterval);
-            alert("🎉 Excellent! You matched all correctly!");
-          }
-        } else {
-          alert('Incorrect match! Try again.');
-        }
-      });
+  drops.forEach(cell => {
+    cell.addEventListener('dragover', e => {
+      e.preventDefault();
+      cell.classList.add('over');
     });
-
-    // Timer
-    function startTimer() {
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = timeLeft;
-        if (timeLeft <= 0) {
+    cell.addEventListener('dragleave', () => cell.classList.remove('over'));
+    cell.addEventListener('drop', () => {
+      cell.classList.remove('over');
+      if (draggedItem && cell.dataset.match === draggedItem.id) {
+        cell.textContent = draggedItem.textContent + " ✅";
+        draggedItem.remove();
+        score++;
+        document.getElementById('score').textContent = score;
+        if (score === 4) {
           clearInterval(timerInterval);
-          alert("⏰ Time’s up! Your score: " + score + "/4");
+          alert("🎉 Excellent! You matched all correctly!");
         }
-      }, 1000);
-    }
-    startTimer();
+      } else {
+        alert('Incorrect match! Try again.');
+      }
+    });
+  });
 
-    // Reset and Prev
-    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
-    document.getElementById('prevBtn').addEventListener('click', () => window.open("index.html","_self"));
+  // Timer
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById('timer').textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("⏰ Time’s up! Your score: " + score + "/4");
+      }
+    }, 1000);
+  }
+  startTimer();
+
+  // Reset
+  document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+  document.getElementById('prevBtn').addEventListener('click', () => window.open("index.html","_self"));
+</script>
+
