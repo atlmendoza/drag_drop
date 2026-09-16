@@ -48,8 +48,8 @@
       background-color: #e8f0fe;
       border-color: #0078d7;
     }
-    #resetBtn {
-      display: block;
+    #resetBtn, #nextBtn {
+      display: inline-block;
       margin: 20px auto;
       padding: 10px 20px;
       background-color: #0078d7;
@@ -129,9 +129,10 @@
     <div class="draggable" draggable="true" id="dependency-life">No ownership; short‑term usage</div>
     <div class="draggable" draggable="true" id="dependency-ex">Printer --→ Document</div>
   </div>
-
-  <button id="resetBtn">Reset</button>
-
+  <div>
+    <button id="resetBtn">Reset</button>
+    <button id="nextBtn"> Next </button>
+  </div>
   <script>
     const draggables = document.querySelectorAll('.draggable');
     const drops = document.querySelectorAll('.drop');
@@ -201,6 +202,7 @@
 
     // Reset
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+    document.getElementById('nextBtn').addEventListener('click', () => window.open("codesamples.html");
   </script>
 </body>
 </html>
